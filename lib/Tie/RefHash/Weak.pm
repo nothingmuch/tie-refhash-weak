@@ -170,6 +170,13 @@ to purge the hash in a more real-time fashion.
 
 =back
 
+=head1 THREAD SAFETY
+
+L<Tie::RefHash> version 1.32 and above have correct handling of threads (with
+respect to changing reference addresses). If your module requires
+Tie::RefHash::Weak to be thread aware you need to depend on both
+L<Tie::RefHash::Weak> and L<Tie::RefHash> version 1.32.
+
 =head1 BUGS
 
 =over 4

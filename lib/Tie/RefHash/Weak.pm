@@ -31,7 +31,9 @@ sub STORE {
 	$s->maybe_purge;
 
 	if (ref $k) {
-		weaken(($s->[0]{overload::StrVal($k)} = [$k, $v])->[0]);
+		# make sure we use the same function that RefHash is using for ref keys
+		my $kstr = Tie::RefHash::refaddr($k);
+		weaken(($s->[0]{$kstr} = [$k, $v])->[0]);
 	}
 	else {
 		$s->[1]{$k} = $v;

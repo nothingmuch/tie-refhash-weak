@@ -194,9 +194,11 @@ L</Hook Perl_magic_killbackrefs>.
 
 =back
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Yuval Kogman <nothingmuch@woobling.org>
+
+some maintenance by Hans Dieter Pearcey <hdp@pobox.com>
 
 =head1 COPYRIGHT & LICENSE
 

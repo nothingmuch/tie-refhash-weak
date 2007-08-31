@@ -8,7 +8,7 @@ use warnings;
 
 use overload ();
 
-our $VERSION = 0.02;
+our $VERSION = 0.03;
 
 use Scalar::Util qw/weaken reftype/;
 use Variable::Magic qw/wizard cast/;

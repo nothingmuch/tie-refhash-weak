@@ -1,3 +1,6 @@
+0.03
+	- Use Variable::Magic to kill stale keys immediately, preventing value leaks
+
 0.02
 	- Fix overload::StrVal behavior (broken by Tie::RefHash change), thanks to Hans Dieter Pearcey
 

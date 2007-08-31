@@ -14,6 +14,7 @@ WriteMakefile(
 		'Task::Weaken' => 0, # no weak refs before this
 		'Scalar::Util' => 0,
 		'Tie::RefHash' => '1.34', # use refaddr instead of overload::StrVal
+		'Variable::Magic' => 0,
 	},
 );
 

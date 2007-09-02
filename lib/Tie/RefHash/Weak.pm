@@ -11,13 +11,20 @@ use overload ();
 our $VERSION = 0.04;
 
 use Scalar::Util qw/weaken reftype/;
-use Variable::Magic qw/wizard cast/;
+use Variable::Magic qw/wizard cast getdata/;
 
-my $wiz = wizard free => \&_clear_weakened_sub, data => sub { my ( $var, $self ) = @_; $self };
+my $wiz = wizard free => \&_clear_weakened_sub, data => \&_add_magic_data;
 
 sub _clear_weakened_sub {
-	my ( $key, $self ) = @_;
-	$self->_clear_weakened($key) if defined $self; # support subclassing
+	my ( $key, $objs ) = @_;
+	foreach my $self ( @{ $objs || [] } ) {
+		$self->_clear_weakened($key); # support subclassing
+	}
+}
+
+sub _add_magic_data {
+	my ( $key, $objects ) = @_;
+	$objects;
 }
 
 sub _clear_weakened {
@@ -36,17 +43,27 @@ sub STORE {
 
 		weaken( $entry->[0] );
 
+		my $objects;
+
+		# blech, any idea how to clean this up?
+
 		if ( reftype $k eq 'SCALAR' ) {
-			cast $$k, $wiz, $s;
+			$objects = getdata( $$k, $wiz )
+				or cast( $$k, $wiz, ( $objects = [] ) );
 		} elsif ( reftype $k eq 'HASH' ) {
-			cast %$k, $wiz, $s;
+			$objects = getdata ( %$k, $wiz )
+				or cast( %$k, $wiz, ( $objects = [] ) );
 		} elsif ( reftype $k eq 'ARRAY' ) {
-			cast @$k, $wiz, $s;
+			$objects = getdata ( @$k, $wiz )
+				or cast( @$k, $wiz, ( $objects = [] ) );
 		} elsif ( reftype $k eq 'GLOB' ) {
-			cast *{$k}, $wiz, $s;
+			$objects = getdata ( *$k, $wiz )
+				or cast( *$k, $wiz, ( $objects = [] ) );
 		} else {
 			die "patches welcome";
 		}
+
+		push @$objects, $s;
 
 		$s->[0]{$kstr} = $entry;
 	}

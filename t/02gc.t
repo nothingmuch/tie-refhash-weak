@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 7;
+use Test::More tests => 10;
 
 BEGIN { use_ok("Tie::RefHash::Weak") }
 
@@ -20,8 +20,13 @@ my @types = (
 
 my $n = 10; # create a large hunk of 
 
-tie my %hash, 'Tie::RefHash::Weak'; my @copies;
-%hash = map { $_ => 1 } @copies = map {bless new_ref($_), "Some::Class"} 1 .. 1 << $n;
+tie my %hash, 'Tie::RefHash::Weak';
+tie my %hash_2, 'Tie::RefHash::Weak';
+
+my @copies = map {bless new_ref($_), "Some::Class"} 1 .. 1 << $n;
+
+@hash{@copies} = (1) x @copies;
+@hash_2{@copies} = (1) x @copies;
 
 sub new_ref {
 	my $v = shift;
@@ -29,13 +34,16 @@ sub new_ref {
 	$h->( $v );
 }
 
+is(scalar keys %hash_2, 1 << $n, "scalar keys");
 is(scalar keys %hash, 1 << $n, "scalar keys");
 is((tied %hash)->cnt, 1 << $n, "cnt");
 
 splice(@copies, 0, 1 << ($n-1)); # throw some away
 
 is((tied %hash)->cnt, 1 << ($n-1), "cnt");
+is((tied %hash_2)->cnt, 1 << ($n-1), "cnt");
 is(scalar keys %hash, 1 << ($n-1), "scalar keys");
+is(scalar keys %hash_2, 1 << ($n-1), "scalar keys");
 
 splice(@copies, 0, 1 << ($n-2)); # throw some away
 

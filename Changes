@@ -1,3 +1,7 @@
+0.04
+	- Variable::Magic doesn't do more than one instance of a given magic per
+	  SV, so the data is now an array of objects
+
 0.03
 	- Use Variable::Magic to kill stale keys immediately, preventing value leaks
 

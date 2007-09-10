@@ -18,7 +18,7 @@ my $wiz = wizard free => \&_clear_weakened_sub, data => \&_add_magic_data;
 sub _clear_weakened_sub {
 	my ( $key, $objs ) = @_;
 	foreach my $self ( @{ $objs || [] } ) {
-		$self->_clear_weakened($key); # support subclassing
+		$self->_clear_weakened($key) if defined $self; # support subclassing
 	}
 }
 
@@ -63,7 +63,10 @@ sub STORE {
 			die "patches welcome";
 		}
 
-		push @$objects, $s;
+		unless ( grep { $_ == $s } @$objects ) {
+			push @$objects, $s;
+			weaken($objects->[-1]);
+		}
 
 		$s->[0]{$kstr} = $entry;
 	}

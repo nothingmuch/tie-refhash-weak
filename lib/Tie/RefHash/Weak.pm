@@ -121,60 +121,6 @@ This subclass of L<Tie::RefHash> has weak keys, instead of strong ones. The
 values are left unaltered, and you'll have to make sure there are no strong
 references there yourself.
 
-=head1 STRUCTURE MAINTAINCE
-
-In perl when weak refernces go bad, they become undef. L<Tie::RefHash::Weak>
-needs to occasionally go through it's structures and clean out the stale keys.
-
-It does this on two occasions:
-
-=over 4
-
-=item As necessary
-
-When an aggregate operation, like L<keys> and L<values> (even in scalar
-context), or list context interpolation of the hash is made, the whole hash's
-state must be validated.
-
-This is done lazily, within each call to L<NEXTKEY>. If you need to ensure a
-low latency, then only iterate with L<each>.
-
-=item Occasionally
-
-A counter is raised on each update. It's stored in C<$self->[3]>. The counter
-is incremented via the C<maybe_purge> method. If the counter is bigger than ten
-plus C<$self->[4]> (which defaults to 15) times the natural logarithm of the
-number of actual reference keys in the hash (before we know how many are
-stale), then the hash is iterated and purged. This value tries to ensure that
-purges aren't made too often, so that they don't take up too much time, but the
-cleanup is still made in order to prevent leaking data, and to decrement the
-reference counts of the I<values> of the hash.
-
-If you know that your hash will not be accessed often, and 
-
-=back
-
-You can disable purging by making C<maybe_purge> a no-op in your subclass.
-
-You can forcibly purge by calling
-
-	(tied %hash)->purge;
-
-You can tweak the occasional purging by playing setting
-
-	(tied %hash)->[4] = $x;
-
-=head1 TODO
-
-=over 4
-
-=item Hook Perl_magic_killbackrefs
-
-Maybe some day the code which undefines weak references will be hooked with XS
-to purge the hash in a more real-time fashion.
-
-=back
-
 =head1 THREAD SAFETY
 
 L<Tie::RefHash> version 1.32 and above have correct handling of threads (with

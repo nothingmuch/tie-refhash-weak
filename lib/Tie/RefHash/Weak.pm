@@ -56,7 +56,7 @@ sub STORE {
 		} elsif ( reftype $k eq 'ARRAY' ) {
 			$objects = getdata ( @$k, $wiz )
 				or cast( @$k, $wiz, ( $objects = [] ) );
-		} elsif ( reftype $k eq 'GLOB' or reftpe $k eq 'IO' ) {
+		} elsif ( reftype $k eq 'GLOB' or reftype $k eq 'IO' ) {
 			$objects = getdata ( *$k, $wiz )
 				or cast( *$k, $wiz, ( $objects = [] ) );
 		} else {

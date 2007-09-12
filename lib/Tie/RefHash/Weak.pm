@@ -132,21 +132,6 @@ Version 0.02 and later of Tie::RefHash::Weak depend on a thread-safe version of
 Tie::RefHash anyway, so if you are using the latest version this should already
 be taken care of for you.
 
-=head1 BUGS
-
-=over 4
-
-=item Value refcount delay
-
-When the key loses it's reference count and goes undef, the value associated
-with that key will not be deleted until the next call to purge, which may be
-significantly later.
-
-Purge manually in critical sections, or implement
-L</Hook Perl_magic_killbackrefs>.
-
-=back
-
 =head1 AUTHORS
 
 Yuval Kogman <nothingmuch@woobling.org>

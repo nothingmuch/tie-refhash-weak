@@ -17,8 +17,9 @@ my $wiz = wizard free => \&_clear_weakened_sub, data => \&_add_magic_data;
 
 sub _clear_weakened_sub {
 	my ( $key, $objs ) = @_;
-	foreach my $self ( @{ $objs || [] } ) {
-		$self->_clear_weakened($key) if defined $self; # support subclassing
+	local $@;
+	foreach my $self ( grep { defined } @{ $objs || [] } ) {
+		eval { $self->_clear_weakened($key) }; # support subclassing
 	}
 }
 

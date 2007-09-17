@@ -60,6 +60,9 @@ sub STORE {
 		} elsif ( reftype $k eq 'GLOB' or reftype $k eq 'IO' ) {
 			$objects = getdata ( *$k, $wiz )
 				or cast( *$k, $wiz, ( $objects = [] ) );
+		} elsif ( reftype $k eq 'CODE' ) {
+			$objects = getdata ( &$k, $wiz )
+				or cast( &$k, $wiz, ( $objects = [] ) );
 		} else {
 			die "patches welcome";
 		}

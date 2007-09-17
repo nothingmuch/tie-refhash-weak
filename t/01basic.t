@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 19;
+use Test::More tests => 23;
 
 use Scalar::Util qw/weaken/;
 
@@ -74,3 +74,27 @@ is_deeply([ values %hash ], [], "no values in hash");
 is(scalar keys %hash, 0, "scalar keys returns 0");
 is_deeply([ keys %hash ], [] , "keys returns emtpy list");
 
+
+{
+	my $bar = 1;
+	my $closure = sub { fail("should never execute"); $bar };
+	$hash{$closure} = "blah";
+	is( $hash{$closure}, "blah", "code ref key" );
+}
+
+is_deeply([ keys %hash ], [], "no more keys" );
+
+%hash = ();
+
+{
+	my $sub = sub { fail("should never execute") };
+	$hash{$sub} = "boo";
+	is( $hash{$sub}, "boo", "code ref key" );
+}
+
+{
+	local $TODO = "perl doesn't GC non closures";
+	is_deeply([ keys %hash ], [], "no more keys" );
+}
+
+%hash = ();

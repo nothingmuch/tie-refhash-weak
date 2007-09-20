@@ -12,7 +12,7 @@ use overload ();
 
 use B qw/svref_2object CVf_CLONED/;
 
-our $VERSION = 0.06;
+our $VERSION = 0.07;
 
 use Scalar::Util qw/weaken reftype/;
 use Variable::Magic qw/wizard cast getdata/;

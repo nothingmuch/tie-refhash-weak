@@ -6,7 +6,11 @@ use base qw/Tie::RefHash/;
 use strict;
 use warnings;
 
+use warnings::register;
+
 use overload ();
+
+use B qw/svref_2object CVf_CLONED/;
 
 our $VERSION = 0.06;
 
@@ -61,8 +65,12 @@ sub STORE {
 			$objects = getdata ( *$k, $wiz )
 				or cast( *$k, $wiz, ( $objects = [] ) );
 		} elsif ( reftype $k eq 'CODE' ) {
-			$objects = getdata ( &$k, $wiz )
-				or cast( &$k, $wiz, ( $objects = [] ) );
+			unless ( svref_2object($k)->CvFLAGS & CVf_CLONED ) {
+				warnings::warnif("Non closure code references never get garbage collected: $k");
+			} else {
+				$objects = getdata ( &$k, $wiz )
+					or cast( &$k, $wiz, ( $objects = [] ) );
+			}
 		} else {
 			die "patches welcome";
 		}

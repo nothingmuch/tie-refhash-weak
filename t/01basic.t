@@ -7,7 +7,7 @@ use Test::More tests => 23;
 
 use Scalar::Util qw/weaken/;
 
-use_ok("Tie::RefHash::Weak");
+BEGIN { use_ok("Tie::RefHash::Weak") };
 
 tie my %hash, "Tie::RefHash::Weak";
 
@@ -87,6 +87,7 @@ is_deeply([ keys %hash ], [], "no more keys" );
 %hash = ();
 
 {
+	no warnings 'Tie::RefHash::Weak';
 	my $sub = sub { fail("should never execute") };
 	$hash{$sub} = "boo";
 	is( $hash{$sub}, "boo", "code ref key" );

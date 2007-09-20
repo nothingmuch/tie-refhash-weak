@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 23;
+use Test::More tests => 26;
 
 use Scalar::Util qw/weaken/;
 
@@ -86,6 +86,9 @@ is_deeply([ keys %hash ], [], "no more keys" );
 
 %hash = ();
 
+my @w;
+$SIG{__WARN__} = sub { push @w, "@_" };
+
 {
 	no warnings 'Tie::RefHash::Weak';
 	my $sub = sub { fail("should never execute") };
@@ -93,9 +96,17 @@ is_deeply([ keys %hash ], [], "no more keys" );
 	is( $hash{$sub}, "boo", "code ref key" );
 }
 
+is( scalar(@w), 0, "no warnings (disabled");
+
 {
 	local $TODO = "perl doesn't GC non closures";
 	is_deeply([ keys %hash ], [], "no more keys" );
 }
 
+@w = ();
 %hash = ();
+
+$hash{sub { }} = 1;
+
+is( scalar(@w), 1, "got a warning" );
+like( $w[0], qr/never get garbage collected/i, "right warning" );

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 package Tie::RefHash::Weak;
-use base qw/Tie::RefHash/;
+use base qw/Tie::RefHash Exporter/;
 
 use strict;
 use warnings;
@@ -13,6 +13,8 @@ use overload ();
 use B qw/svref_2object CVf_CLONED/;
 
 our $VERSION = 0.07;
+our @EXPORT_OK = qw 'fieldhash fieldhashes';
+our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 use Scalar::Util qw/weaken reftype/;
 use Variable::Magic qw/wizard cast getdata/;
@@ -89,6 +91,16 @@ sub STORE {
 	$v;
 }
 
+sub fieldhash(\%) {
+	tie %{$_[0]}, __PACKAGE__;
+	return $_[0];
+}
+
+sub fieldhashes {
+	tie %{$_}, __PACKAGE__ for @_;
+	return @_;
+}
+
 __PACKAGE__
 
 __END__
@@ -102,8 +114,12 @@ Tie::RefHash::Weak - A Tie::RefHash subclass with weakened references in the key
 =head1 SYNOPSIS
 
 	use Tie::RefHash::Weak;
-
 	tie my %h, 'Tie::RefHash::Weak';
+
+	# OR:
+
+	use Tie::RefHash::Weak 'fieldhash';
+	fieldhash my %h;
 
 	{ # new scope
 		my $val = "foo";
@@ -132,6 +148,26 @@ convenient means to make those references weak.
 This subclass of L<Tie::RefHash> has weak keys, instead of strong ones. The
 values are left unaltered, and you'll have to make sure there are no strong
 references there yourself.
+
+=head1 FUNCTIONS
+
+For compatibility with L<Hash::Util::FieldHash>, this module will, upon
+request, export the following two functions. You may also write
+C<use Tie::RefHash::Weak ':all'>.
+
+=over 4
+
+=item fieldhash %hash
+
+This ties the hash and returns a reference to it.
+
+=item fieldhashes \%hash1, \%hash2 ...
+
+This ties each hash that is passed to it as a reference. It returns the
+list of references in list context, or the number of hashes in scalar
+context.
+
+=back
 
 =head1 THREAD SAFETY
 

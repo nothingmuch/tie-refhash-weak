@@ -167,6 +167,13 @@ Version 0.02 and later of Tie::RefHash::Weak depend on a thread-safe version of
 Tie::RefHash anyway, so if you are using the latest version this should already
 be taken care of for you.
 
+=head1 5.10.0 COMPATIBILITY
+
+Due to a minor change in Perl 5.10.0 a bug in the handling of magic freeing was
+uncovered causing segmentation faults.
+
+This has been patched but not released yet, as of 0.08.
+
 =head1 CAVEAT
 
 You can use an LVALUE reference (such as C<\substr ...>) as a hash key, but

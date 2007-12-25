@@ -12,7 +12,7 @@ use overload ();
 
 use B qw/svref_2object CVf_CLONED/;
 
-our $VERSION = 0.07;
+our $VERSION = 0.08;
 our @EXPORT_OK = qw 'fieldhash fieldhashes';
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 

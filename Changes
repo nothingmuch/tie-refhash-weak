@@ -1,3 +1,8 @@
+0.08
+	- Add fieldhash compatibility API (by Father Chrysostomos)
+	- Fix overloading edge cases (Father Chrysostomos)
+	- Fix REF type references (really scalars) (Father Chrysostomos)
+
 0.07
 	- Warn when trying to store keys that are shared subrefs (they never get garbage collected)
 

@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 10;
+use Symbol qw 'gensym geniosym';
 
 BEGIN { use_ok("Tie::RefHash::Weak") }
 
@@ -13,10 +14,16 @@ sub Tie::RefHash::Weak::cnt {
 }
 
 my @types = (
-	sub { my $v = shift; \$v },
-	sub { [ $_[0] ] },
-	sub { { value => $_[0] } },
+	sub { my $v = shift; \$v },           # SCALAR
+	sub { my $v = shift; \\$v },          # REF
+	sub { my $v = shift; \substr $v, 0 }, # LVALUE
+	sub { [ $_[0] ] },                    # ARRAY
+	sub { { value => $_[0] } },           # HASH
+	sub { gensym },                       # GLOB
+	sub { geniosym },                     # IO
+	sub { my $v = shift; sub { $v } },    # CODE
 );
+my $secret_vault = $types[2]->(''); # workaround for a perl bug
 
 my $n = 10; # create a large hunk of 
 

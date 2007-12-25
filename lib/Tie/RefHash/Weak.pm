@@ -52,29 +52,16 @@ sub STORE {
 
 		my $objects;
 
-		# blech, any idea how to clean this up?
-
-		if ( reftype $k eq 'SCALAR' ) {
-			$objects = getdata( $$k, $wiz )
-				or cast( $$k, $wiz, ( $objects = [] ) );
-		} elsif ( reftype $k eq 'HASH' ) {
-			$objects = getdata ( %$k, $wiz )
-				or cast( %$k, $wiz, ( $objects = [] ) );
-		} elsif ( reftype $k eq 'ARRAY' ) {
-			$objects = getdata ( @$k, $wiz )
-				or cast( @$k, $wiz, ( $objects = [] ) );
-		} elsif ( reftype $k eq 'GLOB' or reftype $k eq 'IO' ) {
-			$objects = getdata ( *$k, $wiz )
-				or cast( *$k, $wiz, ( $objects = [] ) );
-		} elsif ( reftype $k eq 'CODE' ) {
+		if ( reftype $k eq 'CODE' ) {
 			unless ( svref_2object($k)->CvFLAGS & CVf_CLONED ) {
 				warnings::warnif("Non closure code references never get garbage collected: $k");
 			} else {
-				$objects = getdata ( &$k, $wiz )
-					or cast( &$k, $wiz, ( $objects = [] ) );
+				$objects = &getdata ( $k, $wiz )
+					or &cast( $k, $wiz, ( $objects = [] ) );
 			}
 		} else {
-			die "patches welcome";
+			$objects = &getdata( $k, $wiz )
+				or &cast( $k, $wiz, ( $objects = [] ) );
 		}
 
 		unless ( grep { $_ == $s } @$objects ) {
@@ -179,6 +166,14 @@ L<Tie::RefHash::Weak> and L<Tie::RefHash> version 1.32 (or later).
 Version 0.02 and later of Tie::RefHash::Weak depend on a thread-safe version of
 Tie::RefHash anyway, so if you are using the latest version this should already
 be taken care of for you.
+
+=head1 CAVEAT
+
+You can use an LVALUE reference (such as C<\substr ...>) as a hash key, but
+due to a bug in perl (see
+L<http://rt.perl.org/rt3/Public/Bug/Display.html?id=46943>) it might not be 
+possible to weaken a reference to it, in which case the hash element will 
+never be deleted automatically.
 
 =head1 AUTHORS
 

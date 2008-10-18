@@ -64,6 +64,8 @@ sub STORE {
 				or &cast( $k, $wiz, ( $objects = [] ) );
 		}
 
+		@$objects = grep { defined } @$objects;
+
 		unless ( grep { $_ == $s } @$objects ) {
 			push @$objects, $s;
 			weaken($objects->[-1]);

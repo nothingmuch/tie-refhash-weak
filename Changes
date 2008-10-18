@@ -1,3 +1,7 @@
+0.09
+	- Filter dead refs from the magic data storage to avoid uninitialized
+	  warnings.
+
 0.08
 	- Add fieldhash compatibility API (by Father Chrysostomos)
 	- Fix overloading edge cases (Father Chrysostomos)

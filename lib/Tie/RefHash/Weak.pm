@@ -130,7 +130,7 @@ The L<Tie::RefHash> module can be used to access hashes by reference. This is
 useful when you index by object, for example.
 
 The problem with L<Tie::RefHash>, and cross indexing, is that sometimes the
-index should not contain strong references to the objecs. L<Tie::RefHash>'s
+index should not contain strong references to the objects. L<Tie::RefHash>'s
 internal structures contain strong references to the key, and provide no
 convenient means to make those references weak.
 

@@ -16,5 +16,10 @@ WriteMakefile(
 		'Tie::RefHash' => '1.34', # use refaddr instead of overload::StrVal
 		'Variable::Magic' => 0,
 	},
+	META_MERGE   => {
+		resources => {
+			repository => 'https://github.com/nothingmuch/tie-refhash-weak',
+		},
+	},
 );
 
